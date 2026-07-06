@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Advanced Python – Interview Notes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+  :root {
+    --bg:      #0f1117;
+    --surface: #1a1d27;
+    --card:    #21253a;
+    --border:  #2e3354;
+    --accent1: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --accent4: #ffd166;
+    --accent5: #4fc3f7;
+    --text:    #e2e8f0;
+    --muted:   #8892a4;
+    --code-bg: #131622;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 15px;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #1a1d27 0%, #12172b 50%, #0f1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(108,99,255,.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(0,212,170,.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    color: #fff; font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 20px; margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-size: 2.8rem; font-weight: 800;
+    background: linear-gradient(90deg, #fff 0%, var(--accent2) 60%, var(--accent1) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 14px;
+  }
+  .hero p { color: var(--muted); font-size: 1rem; max-width: 620px; margin: 0 auto; }
+
+  /* TOC */
+  .toc {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px 32px;
+    max-width: 900px; margin: 40px auto;
+  }
+  .toc h2 { font-size: 1rem; font-weight: 700; color: var(--accent2); margin-bottom: 16px; letter-spacing: 1px; text-transform: uppercase; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+  .toc-grid a {
+    color: var(--text); text-decoration: none; padding: 8px 12px;
+    border-radius: 8px; border: 1px solid var(--border);
+    font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 8px; transition: all .2s;
+  }
+  .toc-grid a:hover { border-color: var(--accent1); background: rgba(108,99,255,.1); color: var(--accent1); }
+  .toc-grid a span.num {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: #fff; border-radius: 6px; width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+
+  /* LAYOUT */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* CHAPTER */
+  .chapter { margin-top: 56px; padding-top: 8px; border-top: 2px solid var(--border); }
+  .chapter-label {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: #fff; font-size: 11px; font-weight: 800;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .chapter h2 { font-size: 1.9rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .chapter-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
+
+  /* CARD */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px 28px;
+    margin-bottom: 20px; transition: border-color .2s;
+  }
+  .card:hover { border-color: var(--accent1); }
+  .card-accent        { border-left: 4px solid var(--accent1); }
+  .card-accent-green  { border-left: 4px solid var(--accent2); }
+  .card-accent-red    { border-left: 4px solid var(--accent3); }
+  .card-accent-yellow { border-left: 4px solid var(--accent4); }
+  .card-accent-blue   { border-left: 4px solid var(--accent5); }
+
+  .card h3 {
+    font-size: 1.05rem; font-weight: 700; color: #fff;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .card h3 .icon { font-size: 1.2rem; }
+
+  /* DEFINITION LINE */
+  .definition {
+    color: #c8d0e0; font-size: 0.93rem;
+    margin-bottom: 14px; line-height: 1.85;
+    padding-left: 12px; border-left: 3px solid var(--accent1);
+    font-style: italic;
+  }
+
+  /* BULLET LIST */
+  .bullet-list {
+    list-style: none; padding: 0; margin: 10px 0 14px 0;
+  }
+  .bullet-list li {
+    color: #c8d0e0; font-size: 0.92rem; line-height: 1.75;
+    padding: 6px 0 6px 28px; position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .bullet-list li:last-child { border-bottom: none; }
+  .bullet-list li::before {
+    content: '▸';
+    position: absolute; left: 6px; top: 6px;
+    color: var(--accent2); font-size: 13px; font-weight: 700;
+  }
+  .bullet-list li strong { color: #fff; font-weight: 600; }
+  .bullet-list li code {
+    background: rgba(108,99,255,.18); color: #a89cff;
+    padding: 1px 6px; border-radius: 4px;
+    font-family: 'Fira Code', monospace; font-size: 12px;
+  }
+
+  /* NUMBERED LIST */
+  .num-list {
+    list-style: none; padding: 0; margin: 10px 0 14px 0; counter-reset: num;
+  }
+  .num-list li {
+    color: #c8d0e0; font-size: 0.92rem; line-height: 1.75;
+    padding: 7px 0 7px 36px; position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    counter-increment: num;
+  }
+  .num-list li:last-child { border-bottom: none; }
+  .num-list li::before {
+    content: counter(num);
+    position: absolute; left: 0; top: 5px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: #fff; font-size: 11px; font-weight: 800;
+    width: 22px; height: 22px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .num-list li strong { color: #fff; font-weight: 600; }
+  .num-list li code {
+    background: rgba(108,99,255,.18); color: #a89cff;
+    padding: 1px 6px; border-radius: 4px;
+    font-family: 'Fira Code', monospace; font-size: 12px;
+  }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--code-bg); border: 1px solid #2a2f4a;
+    border-radius: 10px; padding: 18px 20px;
+    margin: 14px 0; overflow-x: auto; position: relative;
+  }
+  .code-block::before {
+    content: attr(data-lang);
+    position: absolute; top: 8px; right: 12px;
+    font-size: 10px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .code-block pre {
+    font-family: 'Fira Code', monospace; font-size: 13px;
+    line-height: 1.7; color: #cdd6f4; white-space: pre;
+  }
+  .kw { color: #89b4fa; }
+  .fn { color: #cba6f7; }
+  .st { color: #a6e3a1; }
+  .cm { color: #6c7086; }
+  .nm { color: #fab387; }
+  .dc { color: #f38ba8; }
+
+  /* INFO / TIP / WARN BOXES */
+  .info-box {
+    background: rgba(108,99,255,.08); border: 1px solid rgba(108,99,255,.25);
+    border-radius: 10px; padding: 14px 18px; margin: 12px 0;
+    font-size: 0.88rem; color: #b0b8d8;
+  }
+  .info-box strong { color: var(--accent1); }
+  .tip-box {
+    background: rgba(0,212,170,.07); border: 1px solid rgba(0,212,170,.25);
+    border-radius: 10px; padding: 14px 18px; margin: 12px 0;
+    font-size: 0.88rem; color: #b0d8d0;
+  }
+  .tip-box strong { color: var(--accent2); }
+  .warn-box {
+    background: rgba(255,107,107,.07); border: 1px solid rgba(255,107,107,.25);
+    border-radius: 10px; padding: 14px 18px; margin: 12px 0;
+    font-size: 0.88rem; color: #d8b0b0;
+  }
+  .warn-box strong { color: var(--accent3); }
+
+  /* TABLE */
+  .styled-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; border-radius: 10px; overflow: hidden; }
+  .styled-table thead tr { background: linear-gradient(90deg, #1e2240, #252a45); }
+  .styled-table th { text-align: left; padding: 11px 14px; color: var(--accent2); font-weight: 700; font-size: 12px; letter-spacing: .5px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  .styled-table td { padding: 10px 14px; border-bottom: 1px solid #1e2240; color: #c8d0e0; vertical-align: top; }
+  .styled-table tr:last-child td { border-bottom: none; }
+  .styled-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
+  @media(max-width:640px){ .grid-2 { grid-template-columns: 1fr; } }
+
+  footer { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
+  footer span { color: var(--accent1); font-weight: 600; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Interview Ready</div>
+  <h1>🐍 Advanced Python Notes</h1>
+  <p>Complete, interview-ready reference — every topic explained in simple English with bullet points, code examples, and tables.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>📋 Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#ch1"><span class="num">1</span> OOP Fundamentals</a>
+    <a href="#ch2"><span class="num">2</span> Decorators</a>
+    <a href="#ch3"><span class="num">3</span> Inheritance</a>
+    <a href="#ch4"><span class="num">4</span> Polymorphism</a>
+    <a href="#ch5"><span class="num">5</span> OS Module</a>
+    <a href="#ch6"><span class="num">6</span> Multithreading</a>
+    <a href="#ch7"><span class="num">7</span> Async Programming</a>
+    <a href="#ch8"><span class="num">8</span> API Calls &amp; HTTP</a>
+    <a href="#ch9"><span class="num">9</span> Pydantic Validation</a>
+    <a href="#ch10"><span class="num">10</span> Testing with pytest</a>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 1 — OOP
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch1">
+  <div class="chapter-label">Chapter 1</div>
+  <h2>🏗️ Object-Oriented Programming (OOP)</h2>
+  <p class="chapter-desc">The foundation of writing clean, scalable, production-level Python code.</p>
+
+  <!-- What is OOP -->
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is OOP and Why Do We Use It?</h3>
+    <p class="definition">OOP is a way of organizing code by bundling related data (variables) and behavior (functions) into a single unit called a <strong>class</strong>.</p>
+    <ul class="bullet-list">
+      <li><strong>Reusability</strong> — Write a class once and reuse it anywhere in the project. No need to copy-paste functions every time.</li>
+      <li><strong>Scalability</strong> — You can add new features to a class without touching or breaking any existing code.</li>
+      <li><strong>Readability</strong> — Code organized into classes is much easier for your team (and future-you) to understand and maintain.</li>
+      <li><strong>Grouping</strong> — Instead of having hundreds of loose, unrelated functions, OOP groups them by purpose into neat logical units.</li>
+    </ul>
+  </div>
+
+  <!-- Class -->
+  <div class="card card-accent-green">
+    <h3><span class="icon">📦</span> What is a Class?</h3>
+    <p class="definition">A <strong>class</strong> is a blueprint or template that defines what attributes (data) and methods (behavior) an object will have.</p>
+    <ul class="bullet-list">
+      <li>You create a class using the <code>class</code> keyword followed by a name (e.g., <code>class MyClass:</code>).</li>
+      <li>Everything inside a class must be <strong>indented</strong> — Python uses indentation to group code within the class.</li>
+      <li>A class can contain <strong>attributes</strong> (variables that store data) and <strong>methods</strong> (functions that define behavior).</li>
+      <li>Think of it like a cookie cutter — the class is the cutter shape, and each object you create from it is a unique cookie.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>MyClass</fn>:
+    var_one = <st>"hello"</st>      <cm># class-level attribute (shared)</cm>
+    var_two = <nm>42</nm>
+
+    <kw>def</kw> <fn>method_one</fn>(<kw>self</kw>):
+        <fn>print</fn>(<st>"Method one called"</st>)
+
+    <kw>def</kw> <fn>method_two</fn>(<kw>self</kw>):
+        <fn>print</fn>(<st>"Method two called"</st>)
+</pre></div>
+  </div>
+
+  <!-- Constructor -->
+  <div class="card card-accent-yellow">
+    <h3><span class="icon">🔧</span> What is a Constructor? (<code>__init__</code>)</h3>
+    <p class="definition">A constructor is a special method called <code>__init__</code> that runs <em>automatically</em> when a new object is created. Its job is to initialize the object's own data.</p>
+    <ul class="bullet-list">
+      <li><strong>Auto-called</strong> — You don't call <code>__init__</code> manually. Python calls it automatically the moment you write <code>Person("Alice", 30)</code>.</li>
+      <li><strong>Accepts arguments</strong> — You pass values when creating the object, and <code>__init__</code> receives them and stores them on the object.</li>
+      <li><strong>Uses <code>self.</code></strong> — You use <code>self.name = name</code> to attach data to the specific object being created.</li>
+      <li><strong>Why needed?</strong> — Without a constructor, every object of the same class would share the exact same default values, which is rarely useful.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>Person</fn>:
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, name: <fn>str</fn>, age: <fn>int</fn>):
+        <kw>self</kw>.name = name   <cm># stored on THIS object only</cm>
+        <kw>self</kw>.age  = age
+
+    <kw>def</kw> <fn>introduce</fn>(<kw>self</kw>):
+        <fn>print</fn>(<st>f"I am {self.name}, {self.age} years old."</st>)
+
+alice = <fn>Person</fn>(<st>"Alice"</st>, <nm>30</nm>)
+alice.<fn>introduce</fn>()  <cm># → I am Alice, 30 years old.</cm>
+</pre></div>
+  </div>
+
+  <!-- self -->
+  <div class="card card-accent">
+    <h3><span class="icon">🔗</span> What is <code>self</code>?</h3>
+    <p class="definition"><code>self</code> is a reference to the current object — the specific instance that the method is being called on.</p>
+    <ul class="bullet-list">
+      <li><strong>Always first parameter</strong> — Every method inside a class must have <code>self</code> as its first parameter, otherwise Python raises a <code>TypeError</code>.</li>
+      <li><strong>Auto-passed</strong> — When you call <code>alice.introduce()</code>, Python automatically passes <code>alice</code> as <code>self</code>. You don't type it yourself.</li>
+      <li><strong>Accesses object data</strong> — Through <code>self</code> you can read and write the instance's own attributes like <code>self.name</code>, <code>self.age</code>.</li>
+      <li><strong>Convention</strong> — The name <code>self</code> is just a strong convention. Technically you could name it anything, but never do — always use <code>self</code>.</li>
+    </ul>
+  </div>
+
+  <!-- Class vs Instance Variables -->
+  <div class="card card-accent-blue">
+    <h3><span class="icon">📊</span> Class Variables vs. Instance Variables</h3>
+    <p class="definition">Class variables are shared by all objects. Instance variables are unique to each individual object.</p>
+    <ul class="bullet-list">
+      <li><strong>Class variable</strong> — Defined directly in the class body (not inside any method). All objects share the same value. If you change it, every object sees the new value.</li>
+      <li><strong>Instance variable</strong> — Defined inside <code>__init__</code> using <code>self.attribute = value</code>. Unique per object — changing one object's variable does not affect others.</li>
+      <li><strong>Accessing class variable</strong> — You can access it via <code>ClassName.var</code> or <code>instance.var</code> (read-only from instance).</li>
+      <li><strong>Common use</strong> — Class variables are great for counters, shared configs, or default settings. Instance variables hold unique object-specific data like a person's name or age.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>Counter</fn>:
+    total = <nm>0</nm>          <cm># CLASS variable — shared by ALL instances</cm>
+
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>):
+        <kw>self</kw>.count = <nm>0</nm>  <cm># INSTANCE variable — unique per object</cm>
+
+    <kw>def</kw> <fn>increment</fn>(<kw>self</kw>):
+        <kw>self</kw>.count += <nm>1</nm>
+        Counter.total += <nm>1</nm>
+</pre></div>
+    <table class="styled-table">
+      <thead><tr><th>Type</th><th>Where Defined</th><th>Shared?</th></tr></thead>
+      <tbody>
+        <tr><td>Class variable</td><td>Inside class body (no <code>self</code>)</td><td>✅ Yes — all objects</td></tr>
+        <tr><td>Instance variable</td><td>Inside <code>__init__</code> with <code>self.</code></td><td>❌ No — each object only</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Encapsulation -->
+  <div class="card card-accent-red">
+    <h3><span class="icon">🔐</span> Encapsulation &amp; Access Modifiers</h3>
+    <p class="definition">Encapsulation means hiding internal details of an object and only exposing what is necessary through controlled methods.</p>
+    <ul class="bullet-list">
+      <li><strong>Public</strong> (<code>attribute</code>) — No underscore. Anyone can read or change it freely. This is the default in Python.</li>
+      <li><strong>Protected</strong> (<code>_attribute</code>) — One underscore. A warning to developers: "this is internal, please don't touch it from outside the class." But it's still technically accessible.</li>
+      <li><strong>Private</strong> (<code>__attribute</code>) — Two underscores. Python name-mangles it to <code>_ClassName__attribute</code>, so it cannot be accessed directly from outside the class. Accessing it raises <code>AttributeError</code>.</li>
+      <li><strong>Why it matters</strong> — Public variables can be accidentally changed by anyone, potentially breaking your logic. Private variables give the strongest protection against accidental modification.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>Vault</fn>:
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, secret):
+        <kw>self</kw>.public_data    = <st>"anyone can read this"</st>
+        <kw>self</kw>._protected_data = <st>"be careful — internal use"</st>
+        <kw>self</kw>.__private_data  = secret   <cm># name-mangled</cm>
+
+    <kw>def</kw> <fn>reveal</fn>(<kw>self</kw>):
+        <fn>print</fn>(<kw>self</kw>.__private_data)  <cm># ✅ OK inside the class</cm>
+
+v = <fn>Vault</fn>(<st>"top secret"</st>)
+<fn>print</fn>(v.public_data)        <cm># ✅ fine</cm>
+<fn>print</fn>(v._protected_data)    <cm># ⚠️ works but discouraged</cm>
+<cm># print(v.__private_data) → ❌ AttributeError</cm>
+</pre></div>
+  </div>
+
+  <!-- Method Types -->
+  <div class="card card-accent">
+    <h3><span class="icon">⚙️</span> Types of Methods: Instance, Class, and Static</h3>
+    <p class="definition">Python has three types of methods — each is used for a different purpose depending on whether you need access to the object, the class, or neither.</p>
+    <ul class="bullet-list">
+      <li><strong>Instance Method</strong> (default) — Takes <code>self</code> as the first parameter. Can read and modify both instance and class variables. Used for object-specific behavior. Most methods you write will be instance methods.</li>
+      <li><strong>Class Method</strong> (<code>@classmethod</code>) — Takes <code>cls</code> as the first parameter. Operates on the class itself, not on any specific object. Used for updating shared class variables or providing alternative constructors like <code>from_json()</code> or <code>from_csv()</code>.</li>
+      <li><strong>Static Method</strong> (<code>@staticmethod</code>) — Takes no automatic first argument. It's just a regular utility function that logically belongs inside the class but doesn't need any class or instance data. Example: a helper to validate a file extension.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>Example</fn>:
+    my_variable = <nm>100</nm>
+
+    <kw>def</kw> <fn>instance_method</fn>(<kw>self</kw>):      <cm># needs a specific object</cm>
+        <fn>print</fn>(<kw>self</kw>.my_variable)
+
+    <dc>@classmethod</dc>
+    <kw>def</kw> <fn>class_method</fn>(<nm>cls</nm>, new_val):  <cm># works on the class itself</cm>
+        <nm>cls</nm>.my_variable = new_val
+
+    <dc>@staticmethod</dc>
+    <kw>def</kw> <fn>utility</fn>():                  <cm># no self or cls needed</cm>
+        <fn>print</fn>(<st>"General helper function"</st>)
+</pre></div>
+    <table class="styled-table">
+      <thead><tr><th>Method Type</th><th>First Param</th><th>Instance Vars</th><th>Class Vars</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td>Instance</td><td><code>self</code></td><td>✅</td><td>✅</td><td>Object-specific behavior</td></tr>
+        <tr><td>Class</td><td><code>cls</code></td><td>❌</td><td>✅</td><td>Shared state, alt constructors</td></tr>
+        <tr><td>Static</td><td>none</td><td>❌</td><td>❌</td><td>Pure utility functions</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Dunder Methods -->
+  <div class="card card-accent-green">
+    <h3><span class="icon">✨</span> Dunder (Magic) Methods</h3>
+    <p class="definition">Dunder methods are special methods with double underscores on both sides (like <code>__init__</code>). Python calls them automatically in certain situations.</p>
+    <ul class="bullet-list">
+      <li><strong>Why "dunder"?</strong> — The name comes from "Double UNDERscore". They are also called magic methods because Python invokes them magically without you calling them explicitly.</li>
+      <li><strong><code>__init__</code></strong> — The constructor. Runs automatically when you create a new object.</li>
+      <li><strong><code>__str__</code></strong> — Controls what gets printed when you call <code>print(obj)</code>. Without it, you'd see something unhelpful like <code>&lt;__main__.MyClass object at 0x...&gt;</code>.</li>
+      <li><strong><code>__repr__</code></strong> — The developer-facing representation shown in the interactive shell. Should be unambiguous and ideally show how to recreate the object.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>MyClass</fn>:
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, name):
+        <kw>self</kw>.name = name
+
+    <kw>def</kw> <fn>__str__</fn>(<kw>self</kw>):                  <cm># called by print()</cm>
+        <kw>return</kw> <st>f"MyClass → {self.name}"</st>
+
+obj = <fn>MyClass</fn>(<st>"Demo"</st>)
+<fn>print</fn>(obj)  <cm># → MyClass → Demo</cm>
+</pre></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 2 — DECORATORS
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch2">
+  <div class="chapter-label">Chapter 2</div>
+  <h2>🪄 Decorators</h2>
+  <p class="chapter-desc">Adding extra behavior to functions without changing their original code.</p>
+
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is a Decorator?</h3>
+    <p class="definition">A decorator is a function that wraps another function to add extra behavior before and/or after it runs — without modifying the original function's code.</p>
+    <ul class="bullet-list">
+      <li><strong>Takes a function as input</strong> — The decorator receives the original function as an argument (commonly called <code>func</code>).</li>
+      <li><strong>Returns a new function</strong> — It returns a wrapper function that includes the original function call plus your added logic.</li>
+      <li><strong>Applied with <code>@</code></strong> — Writing <code>@my_decorator</code> above a function is shorthand for <code>fetch_data = my_decorator(fetch_data)</code>.</li>
+      <li><strong>Non-intrusive</strong> — The original function never knows a decorator is wrapping it. Its code stays clean and unchanged.</li>
+      <li><strong>Used everywhere</strong> — Airflow uses <code>@task</code>, FastAPI uses <code>@app.get()</code>, pytest uses <code>@pytest.mark.parametrize</code>. Knowing how they work makes you stand out in interviews.</li>
+    </ul>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3><span class="icon">🧱</span> How to Build a Decorator — The Structure</h3>
+    <p class="definition">Every decorator follows the same 3-part pattern: outer function → inner wrapper → return wrapper.</p>
+    <ul class="num-list">
+      <li><strong>Outer function</strong> accepts <code>func</code> (the function being decorated) as its only argument.</li>
+      <li><strong>Inner <code>wrapper</code> function</strong> contains your pre-logic, calls the original function (<code>func(*args, **kwargs)</code>), then your post-logic.</li>
+      <li><strong>Return <code>wrapper</code></strong> at the end of the outer function — this is what replaces the original function.</li>
+      <li>Use <code>*args, **kwargs</code> in the wrapper so it can accept any combination of arguments the original function expects.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>def</kw> <fn>my_decorator</fn>(func):
+    <kw>def</kw> <fn>wrapper</fn>(*args, **kwargs):
+        <fn>print</fn>(<st>"⏳ Before the function runs"</st>)     <cm># pre-logic</cm>
+        result = <fn>func</fn>(*args, **kwargs)            <cm># call original</cm>
+        <fn>print</fn>(<st>"✅ After the function runs"</st>)      <cm># post-logic</cm>
+        <kw>return</kw> result
+    <kw>return</kw> wrapper
+
+<dc>@my_decorator</dc>
+<kw>def</kw> <fn>fetch_data</fn>(url: <fn>str</fn>):
+    <kw>return</kw> <st>f"Fetching from {url}"</st>
+
+<fn>fetch_data</fn>(<st>"https://api.example.com"</st>)
+<cm># ⏳ Before the function runs</cm>
+<cm># ✅ After the function runs</cm>
+</pre></div>
+  </div>
+
+  <div class="card card-accent-yellow">
+    <h3><span class="icon">🌍</span> Real-World Example: Auto-Save DataFrame as Parquet</h3>
+    <p class="definition">A classic data engineering use case — automatically save any function's DataFrame output to Parquet, without touching the function itself.</p>
+    <ul class="bullet-list">
+      <li><strong>Problem</strong> — You have many functions that return DataFrames. You want all of them to automatically save to Parquet, but you don't want to copy-paste the save logic into each one.</li>
+      <li><strong>Solution</strong> — Write a <code>pandas_to_parquet</code> decorator once, and apply it to any function with <code>@pandas_to_parquet</code>.</li>
+      <li><strong>The decorator</strong> calls the original function, receives the DataFrame it returns, then automatically writes it to a Parquet file.</li>
+      <li><strong>Result</strong> — Clean, reusable, and the core function stays focused only on loading data — not saving it.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>def</kw> <fn>pandas_to_parquet</fn>(func):
+    <kw>def</kw> <fn>wrapper</fn>(*args, **kwargs):
+        df = <fn>func</fn>(*args, **kwargs)         <cm># original func returns DataFrame</cm>
+        output = kwargs.get(<st>"output_path"</st>, <st>"temp.parquet"</st>)
+        df.<fn>to_parquet</fn>(output)
+        <fn>print</fn>(<st>f"✅ Saved to {output}"</st>)
+        <kw>return</kw> df
+    <kw>return</kw> wrapper
+
+<dc>@pandas_to_parquet</dc>
+<kw>def</kw> <fn>load_csv</fn>(file_path: <fn>str</fn>, output_path: <fn>str</fn> = <st>"out.parquet"</st>):
+    <kw>import</kw> pandas <kw>as</kw> pd
+    <kw>return</kw> pd.<fn>read_csv</fn>(file_path)
+</pre></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 3 — INHERITANCE
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch3">
+  <div class="chapter-label">Chapter 3</div>
+  <h2>🧬 Inheritance</h2>
+  <p class="chapter-desc">Reusing and extending existing classes without rewriting code.</p>
+
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is Inheritance?</h3>
+    <p class="definition">Inheritance allows a child class to automatically receive all the attributes and methods of a parent class, so you never have to rewrite them.</p>
+    <ul class="bullet-list">
+      <li><strong>Avoid duplication</strong> — Instead of writing the same code in two classes, put it in the parent and let children inherit it for free.</li>
+      <li><strong>Syntax</strong> — <code>class Employee(Company):</code> — the parent class goes inside the parentheses.</li>
+      <li><strong>Always call parent constructor</strong> — Inside the child's <code>__init__</code>, explicitly call <code>ParentClass.__init__(self, ...)</code> so the parent's attributes are initialized properly.</li>
+      <li><strong>Child can override</strong> — A child can define a method with the same name as the parent to replace (override) the parent's behavior.</li>
+      <li><strong>Four types in Python</strong> — Single-level, Multiple (parallel), Multi-level (chain), and Multiple-base (two parents).</li>
+    </ul>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3><span class="icon">1️⃣</span> Single-Level Inheritance</h3>
+    <p class="definition">One child inherits directly from one parent. The simplest and most common form.</p>
+    <ul class="bullet-list">
+      <li><strong>Structure</strong> — <code>Parent → Child</code>. The child gets everything the parent has.</li>
+      <li><strong>Call parent constructor</strong> — Use <code>Company.__init__(self, company_name)</code> inside the child's <code>__init__</code> to set up the parent's attributes.</li>
+      <li><strong>Call parent method</strong> — Use <code>Company.info(self)</code> inside the child's method to run the parent's version first, then add the child's output.</li>
+      <li><strong>Use case</strong> — <code>Employee</code> inheriting from <code>Company</code> — an employee needs all company info plus their own employee-specific details.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>Company</fn>:
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, company_name: <fn>str</fn>):
+        <kw>self</kw>.company_name = company_name
+    <kw>def</kw> <fn>info</fn>(<kw>self</kw>):
+        <fn>print</fn>(<st>f"Company: {self.company_name}"</st>)
+
+<kw>class</kw> <fn>Employee</fn>(<fn>Company</fn>):
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, emp_name, co_name):
+        <fn>Company</fn>.<fn>__init__</fn>(<kw>self</kw>, co_name)   <cm># always call parent first!</cm>
+        <kw>self</kw>.employee_name = emp_name
+    <kw>def</kw> <fn>info</fn>(<kw>self</kw>):
+        <fn>Company</fn>.<fn>info</fn>(<kw>self</kw>)                <cm># parent output first</cm>
+        <fn>print</fn>(<st>f"Employee: {self.employee_name}"</st>)
+</pre></div>
+  </div>
+
+  <div class="card card-accent-yellow">
+    <h3><span class="icon">🌿</span> Multiple (Parallel) Inheritance — Many Children, One Parent</h3>
+    <p class="definition">Several independent child classes each inherit from the same single parent class.</p>
+    <ul class="bullet-list">
+      <li><strong>Structure</strong> — <code>Parent → Child1, Child2, Child3</code> (children are siblings, not a chain).</li>
+      <li><strong>Each child is independent</strong> — <code>Employee</code> and <code>Contractor</code> both inherit from <code>Company</code>, but they don't inherit from each other.</li>
+      <li><strong>Shared base</strong> — All children get the same parent attributes (like <code>company_name</code>), but each has its own unique data and methods.</li>
+      <li><strong>Use case</strong> — Different types of staff (employees, contractors, managers) all working at the same company.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>Contractor</fn>(<fn>Company</fn>):
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, contractor_name, company_name):
+        <fn>Company</fn>.<fn>__init__</fn>(<kw>self</kw>, company_name)
+        <kw>self</kw>.contractor_name = contractor_name
+    <kw>def</kw> <fn>info</fn>(<kw>self</kw>):
+        <fn>Company</fn>.<fn>info</fn>(<kw>self</kw>)
+        <fn>print</fn>(<st>f"Contractor: {self.contractor_name}"</st>)
+</pre></div>
+  </div>
+
+  <div class="card card-accent-blue">
+    <h3><span class="icon">⛓️</span> Multi-Level Inheritance — A Chain</h3>
+    <p class="definition">A chain of inheritance: <code>Grandparent → Parent → Child</code>. Each level adds more specialization.</p>
+    <ul class="bullet-list">
+      <li><strong>Structure</strong> — Like a family tree going down: <code>Company → Manager → Employee</code>.</li>
+      <li><strong>Method Resolution Order (MRO)</strong> — Python looks for a method in the current class first, then goes up the chain level by level until it finds it.</li>
+      <li><strong>Cascading calls</strong> — When <code>Employee.info()</code> calls <code>Manager.info()</code>, which itself calls <code>Company.info()</code> — the full chain fires in order.</li>
+      <li><strong>Use case</strong> — Building detailed hierarchies where each level adds more specific information on top of the previous level.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>Manager</fn>(<fn>Company</fn>):
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, mgr_name, co_name):
+        <fn>Company</fn>.<fn>__init__</fn>(<kw>self</kw>, co_name)
+        <kw>self</kw>.manager_name = mgr_name
+
+<kw>class</kw> <fn>Employee</fn>(<fn>Manager</fn>):    <cm># Employee → Manager → Company</cm>
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, emp, mgr, co):
+        <fn>Manager</fn>.<fn>__init__</fn>(<kw>self</kw>, mgr, co)
+        <kw>self</kw>.employee_name = emp
+    <kw>def</kw> <fn>info</fn>(<kw>self</kw>):
+        <fn>Manager</fn>.<fn>info</fn>(<kw>self</kw>)           <cm># triggers whole chain upward</cm>
+        <fn>print</fn>(<st>f"Employee: {self.employee_name}"</st>)
+<cm># Output: Company → Manager → Employee (in order)</cm>
+</pre></div>
+  </div>
+
+  <div class="card card-accent-red">
+    <h3><span class="icon">⚡</span> Multiple-Base Inheritance — Two Parents, One Child</h3>
+    <p class="definition">A single child inherits from two completely separate parent classes at the same time, combining functionality from both.</p>
+    <ul class="bullet-list">
+      <li><strong>Syntax</strong> — <code>class Employee(Company, ClientCompany):</code> — list both parents in parentheses.</li>
+      <li><strong>Call both constructors</strong> — Inside <code>__init__</code>, explicitly call each parent's constructor to set up all attributes from both parents.</li>
+      <li><strong>Accesses both</strong> — The child can call methods from <em>either</em> parent class.</li>
+      <li><strong>Use case</strong> — A consultancy employee who needs both internal company data (from <code>Company</code>) and client company info (from <code>ClientCompany</code>).</li>
+      <li><strong>Rare but powerful</strong> — Used in mix-in patterns when you need to combine unrelated features into one class.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>ClientCompany</fn>:
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, client_name):
+        <kw>self</kw>.client_name = client_name
+
+<kw>class</kw> <fn>Employee</fn>(<fn>Company</fn>, <fn>ClientCompany</fn>):   <cm># two parents!</cm>
+    <kw>def</kw> <fn>__init__</fn>(<kw>self</kw>, emp_name, co_name, client_name):
+        <fn>Company</fn>.<fn>__init__</fn>(<kw>self</kw>, co_name)
+        <fn>ClientCompany</fn>.<fn>__init__</fn>(<kw>self</kw>, client_name)
+        <kw>self</kw>.employee_name = emp_name
+</pre></div>
+  </div>
+
+  <table class="styled-table">
+    <thead><tr><th>Type</th><th>Structure</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td>Single-Level</td><td>Parent → Child</td><td>Simple extension (Employee from Company)</td></tr>
+      <tr><td>Multiple/Parallel</td><td>Parent → Many Children</td><td>Several independent subclasses from same base</td></tr>
+      <tr><td>Multi-Level</td><td>Grandparent → Parent → Child</td><td>Hierarchical chain (Company → Manager → Employee)</td></tr>
+      <tr><td>Multiple-Base</td><td>Two Parents → Child</td><td>Combining unrelated features into one class</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 4 — POLYMORPHISM
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch4">
+  <div class="chapter-label">Chapter 4</div>
+  <h2>🎭 Polymorphism</h2>
+  <p class="chapter-desc">Same method name, different behaviors — the key to scalable design.</p>
+
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is Polymorphism?</h3>
+    <p class="definition">Polymorphism means "many forms." Different classes can implement a method with the same name, each with its own unique behavior.</p>
+    <ul class="bullet-list">
+      <li><strong>Same name, different logic</strong> — Three classes — <code>API_Fetch</code>, <code>DB_Fetch</code>, <code>S3_Fetch</code> — all have a method called <code>fetch()</code>, but each does something different inside.</li>
+      <li><strong>Caller doesn't need to know</strong> — The code that calls <code>source.fetch()</code> doesn't care which class <code>source</code> is. It just calls <code>fetch()</code> and the right version runs automatically.</li>
+      <li><strong>Easy to extend</strong> — Adding a new data source (e.g., <code>File_Fetch</code>) only requires creating a new class with a <code>fetch()</code> method. You never touch the calling code.</li>
+      <li><strong>Safer than one big class</strong> — If you put <code>api_fetch()</code>, <code>db_fetch()</code>, <code>s3_fetch()</code> all in one class, every update risks breaking the others. Separate classes are much safer.</li>
+    </ul>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3><span class="icon">💡</span> Polymorphism in Action</h3>
+    <div class="code-block" data-lang="python"><pre>
+<kw>class</kw> <fn>API_Fetch</fn>:
+    <kw>def</kw> <fn>fetch</fn>(<kw>self</kw>):
+        <fn>print</fn>(<st>"Fetching data from REST API"</st>)
+
+<kw>class</kw> <fn>DB_Fetch</fn>:
+    <kw>def</kw> <fn>fetch</fn>(<kw>self</kw>):
+        <fn>print</fn>(<st>"Fetching data from Database"</st>)
+
+<kw>class</kw> <fn>S3_Fetch</fn>:
+    <kw>def</kw> <fn>fetch</fn>(<kw>self</kw>):
+        <fn>print</fn>(<st>"Fetching data from S3 Bucket"</st>)
+
+<cm># One loop, three different behaviors — that's polymorphism!</cm>
+<kw>for</kw> source <kw>in</kw> (<fn>API_Fetch</fn>(), <fn>DB_Fetch</fn>(), <fn>S3_Fetch</fn>()):
+    source.<fn>fetch</fn>()
+</pre></div>
+    <div class="tip-box"><strong>Interview Tip:</strong> Polymorphism promotes the Open/Closed Principle — your code is open for extension (add new classes) but closed for modification (existing code unchanged).</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 5 — OS MODULE
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch5">
+  <div class="chapter-label">Chapter 5</div>
+  <h2>📂 OS Module</h2>
+  <p class="chapter-desc">Navigating and interacting with the file system programmatically.</p>
+
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is the OS Module?</h3>
+    <p class="definition">The <code>os</code> module is a built-in Python library that gives you tools to interact with the operating system's file system — no installation needed.</p>
+    <ul class="bullet-list">
+      <li><strong>Built-in</strong> — Part of Python's standard library. Just write <code>import os</code> — nothing to install.</li>
+      <li><strong>Cross-platform</strong> — Works the same on Windows, macOS, and Linux. <code>os.path.join()</code> automatically uses the correct separator (<code>\</code> or <code>/</code>) for the OS.</li>
+      <li><strong>Common tasks</strong> — Find where your script is running, list files in a folder, check if something is a file or directory, and build file paths dynamically.</li>
+      <li><strong>Essential for data pipelines</strong> — Real data pipelines must discover files dynamically — you can't hard-code file names when new files arrive every day.</li>
+    </ul>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3><span class="icon">🔧</span> Key OS Functions You Must Know</h3>
+    <div class="code-block" data-lang="python"><pre>
+<kw>import</kw> os
+
+<cm># Where is the process running from?</cm>
+<fn>print</fn>(os.<fn>getcwd</fn>())                 <cm># → C:\Users\alice\project</cm>
+
+<cm># Full path of the current script file</cm>
+<fn>print</fn>(os.path.<fn>abspath</fn>(__file__))    <cm># → C:\...\script.py</cm>
+
+<cm># Folder that contains the current script</cm>
+<fn>print</fn>(os.path.<fn>dirname</fn>(__file__))    <cm># → C:\...\utils</cm>
+
+<cm># List all entries in current directory</cm>
+<kw>for</kw> entry <kw>in</kw> os.<fn>listdir</fn>():
+    full = os.path.<fn>join</fn>(os.<fn>getcwd</fn>(), entry)
+    <fn>print</fn>(<st>f"{entry} → {'file' if os.path.isfile(full) else 'folder'}"</st>)
+</pre></div>
+    <table class="styled-table">
+      <thead><tr><th>Function</th><th>What it Does</th></tr></thead>
+      <tbody>
+        <tr><td><code>os.getcwd()</code></td><td>Returns the current working directory</td></tr>
+        <tr><td><code>os.path.abspath(__file__)</code></td><td>Full absolute path of the running script</td></tr>
+        <tr><td><code>os.path.dirname(__file__)</code></td><td>Folder that contains the current script</td></tr>
+        <tr><td><code>os.listdir(path)</code></td><td>Returns a list of all entries in a directory</td></tr>
+        <tr><td><code>os.path.isfile(path)</code></td><td>True if path points to a file</td></tr>
+        <tr><td><code>os.path.join(a, b)</code></td><td>Joins path parts with the correct OS separator</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-accent-yellow">
+    <h3><span class="icon">📈</span> Incremental Loading — Real Data Engineering Pattern</h3>
+    <p class="definition">Process only new files (those created after the last pipeline run), using date-named CSV files and simple string comparison.</p>
+    <ul class="bullet-list">
+      <li><strong>Scenario</strong> — A <code>data/</code> folder receives a new CSV file every day, named with the date: <code>2026-04-15.csv</code>, <code>2026-01-14.csv</code>, etc.</li>
+      <li><strong>Goal</strong> — Only process files <em>newer</em> than <code>last_load</code>. Skip already-processed ones to avoid duplicates.</li>
+      <li><strong>Why string comparison works</strong> — ISO-8601 date format (YYYY-MM-DD) keeps dates in chronological order even as plain strings. <code>"2026-04-15" &gt; "2026-01-14"</code> is <code>True</code>.</li>
+      <li><strong>Skip sub-folders</strong> — Always check <code>os.path.isfile()</code> first so you don't accidentally try to process a folder as a CSV.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>import</kw> os
+data_dir  = os.path.<fn>join</fn>(os.<fn>getcwd</fn>(), <st>'data'</st>)
+last_load = <st>"2026-01-14"</st>
+
+<kw>for</kw> filename <kw>in</kw> os.<fn>listdir</fn>(data_dir):
+    full_path = os.path.<fn>join</fn>(data_dir, filename)
+    <kw>if not</kw> os.path.<fn>isfile</fn>(full_path):
+        <kw>continue</kw>                           <cm># skip sub-folders</cm>
+    date_part = filename.<fn>split</fn>(<st>'.csv'</st>)[<nm>0</nm>]  <cm># e.g. '2026-04-15'</cm>
+    <kw>if</kw> date_part > last_load:
+        <fn>print</fn>(<st>f"✅ Processing: {filename}"</st>)
+    <kw>else</kw>:
+        <fn>print</fn>(<st>f"⏭ Already done: {filename}"</st>)
+</pre></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 6 — MULTITHREADING
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch6">
+  <div class="chapter-label">Chapter 6</div>
+  <h2>🧵 Multithreading</h2>
+  <p class="chapter-desc">Running multiple tasks at the same time to speed up I/O-heavy work.</p>
+
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is Multithreading?</h3>
+    <p class="definition">Multithreading runs multiple threads (lightweight units of execution) at the same time inside a single process, allowing I/O-bound tasks to run in parallel.</p>
+    <ul class="bullet-list">
+      <li><strong>Best for I/O-bound tasks</strong> — Tasks that spend most of their time <em>waiting</em> (API calls, file reads, DB queries). Threads can wait in parallel instead of one after another.</li>
+      <li><strong>Not for CPU-heavy work</strong> — Python's GIL (Global Interpreter Lock) prevents true parallel CPU execution inside threads. For heavy math, use <code>multiprocessing</code> instead.</li>
+      <li><strong>Dramatic speedup</strong> — 5 API calls × 5 seconds each = 25 seconds sequential. With threads = only ~5 seconds total (all calls run at the same time).</li>
+      <li><strong>Modern tool</strong> — Use <code>ThreadPoolExecutor</code> from <code>concurrent.futures</code>, not the older <code>threading.Thread</code> directly. It's simpler, safer, and production-ready.</li>
+    </ul>
+  </div>
+
+  <div class="card card-accent-red">
+    <h3><span class="icon">🐌</span> Problem: Sequential Is Slow</h3>
+    <div class="code-block" data-lang="python"><pre>
+<kw>import</kw> time
+
+<kw>def</kw> <fn>fetch_data</fn>(url):
+    time.<fn>sleep</fn>(<nm>5</nm>)    <cm># simulate 5-sec API call</cm>
+    <kw>return</kw> <st>f"Data from {url}"</st>
+
+urls = [<st>"url1"</st>, <st>"url2"</st>, <st>"url3"</st>, <st>"url4"</st>, <st>"url5"</st>]
+<kw>for</kw> u <kw>in</kw> urls:
+    <fn>print</fn>(<fn>fetch_data</fn>(u))
+<cm># Total time: 5 × 5 = 25 seconds 😴</cm>
+</pre></div>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3><span class="icon">⚡</span> Solution: ThreadPoolExecutor</h3>
+    <p class="definition"><code>ThreadPoolExecutor</code> manages a pool of threads, runs tasks in parallel, and collects results — all with minimal code.</p>
+    <ul class="bullet-list">
+      <li><strong><code>max_workers</code></strong> — How many threads to run simultaneously. For small lists, set it to <code>len(urls)</code>. For large lists, cap it at 100–200 to avoid overwhelming system resources.</li>
+      <li><strong><code>executor.map(fn, list)</code></strong> — Submits all tasks and returns results in the same order as inputs. Best for uniform tasks with no special per-task control needed.</li>
+      <li><strong><code>executor.submit(fn, *args)</code></strong> — Returns a <code>Future</code> object per task. Use when you need per-task control like checking errors, cancellation, or timeout.</li>
+      <li><strong>Context manager</strong> — Using <code>with ThreadPoolExecutor(...) as executor:</code> automatically shuts down the pool and waits for all threads when done.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>from</kw> concurrent.futures <kw>import</kw> <fn>ThreadPoolExecutor</fn>
+<kw>import</kw> time
+
+<kw>def</kw> <fn>fetch_data</fn>(url):
+    time.<fn>sleep</fn>(<nm>5</nm>)
+    <kw>return</kw> <st>f"Data from {url}"</st>
+
+urls = [<st>"url1"</st>, <st>"url2"</st>, <st>"url3"</st>, <st>"url4"</st>, <st>"url5"</st>]
+
+<kw>with</kw> <fn>ThreadPoolExecutor</fn>(max_workers=<fn>len</fn>(urls)) <kw>as</kw> executor:
+    results = <fn>list</fn>(executor.<fn>map</fn>(<fn>fetch_data</fn>, urls))
+
+<fn>print</fn>(results)
+<cm># Total time: ~5 seconds ✅ (all 5 run in parallel!)</cm>
+</pre></div>
+    <table class="styled-table">
+      <thead><tr><th>Aspect</th><th>threading.Thread (old)</th><th>ThreadPoolExecutor (modern)</th></tr></thead>
+      <tbody>
+        <tr><td>Boilerplate</td><td>High — create, start, join each</td><td>Low — context manager handles it</td></tr>
+        <tr><td>Results</td><td>Manual shared variables</td><td>Future objects, easy <code>.result()</code></td></tr>
+        <tr><td>Recommended for</td><td>Learning / simple examples</td><td>Production I/O pipelines</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box"><strong>Rule of thumb:</strong> I/O-bound → <strong>Multithreading</strong> &nbsp;|&nbsp; CPU-bound → <strong>Multiprocessing</strong> &nbsp;|&nbsp; High-concurrency I/O → <strong>AsyncIO</strong></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 7 — ASYNC
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch7">
+  <div class="chapter-label">Chapter 7</div>
+  <h2>⚡ Asynchronous Programming (asyncio)</h2>
+  <p class="chapter-desc">Handling many I/O tasks at once with a single thread using cooperative scheduling.</p>
+
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is Async Programming?</h3>
+    <p class="definition">Async programming lets a single thread handle many I/O tasks at the same time by voluntarily "pausing" when waiting and letting other tasks run during that wait.</p>
+    <ul class="bullet-list">
+      <li><strong>Cooperative multitasking</strong> — Unlike threads, async tasks voluntarily give up control when they hit an <code>await</code>. The event loop then picks the next ready task.</li>
+      <li><strong>Single thread</strong> — No extra OS threads are created. Everything runs on one thread, which means lower memory and overhead compared to multithreading.</li>
+      <li><strong>Event loop</strong> — The engine that manages all coroutines. It constantly checks which coroutines are ready to continue and switches between them instantly.</li>
+      <li><strong>Best for</strong> — High-concurrency I/O: fetching from many APIs, reading many files, or querying many databases at once.</li>
+    </ul>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3><span class="icon">🔑</span> Key Keywords: <code>async def</code>, <code>await</code>, <code>asyncio.run()</code></h3>
+    <ul class="bullet-list">
+      <li><strong><code>async def</code></strong> — Declares a function as a <em>coroutine</em>. It cannot be called like a normal function — it must be awaited or run via <code>asyncio.run()</code>.</li>
+      <li><strong><code>await</code></strong> — Pauses the current coroutine and gives control back to the event loop so other coroutines can run. Without <code>await</code>, the coroutine blocks the thread just like regular code.</li>
+      <li><strong><code>asyncio.sleep(n)</code></strong> — The async-friendly version of <code>time.sleep()</code>. It pauses the coroutine without blocking the thread. Always use this inside <code>async def</code> functions — <strong>never</strong> use <code>time.sleep()</code> in async code.</li>
+      <li><strong><code>asyncio.run(coro)</code></strong> — The entry point. Creates the event loop and runs your top-level coroutine. Call this from regular (synchronous) code to kick off everything.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>import</kw> asyncio
+
+<kw>async def</kw> <fn>main</fn>():
+    <fn>print</fn>(<st>"hello"</st>)
+    <kw>await</kw> asyncio.<fn>sleep</fn>(<nm>3</nm>)   <cm># thread is FREE during these 3 seconds</cm>
+    <fn>print</fn>(<st>"world"</st>)
+
+asyncio.<fn>run</fn>(<fn>main</fn>())
+</pre></div>
+    <div class="warn-box"><strong>Common Mistake:</strong> Never use <code>time.sleep()</code> inside an <code>async def</code> function — it blocks the entire thread and completely defeats the purpose of async. Always use <code>await asyncio.sleep()</code>.</div>
+  </div>
+
+  <div class="card card-accent-yellow">
+    <h3><span class="icon">🔄</span> Running Many Coroutines Together: <code>asyncio.gather()</code></h3>
+    <p class="definition"><code>asyncio.gather()</code> runs multiple coroutines <em>concurrently</em> and returns all their results together, in the same order as the inputs.</p>
+    <ul class="bullet-list">
+      <li><strong>Pass with <code>*</code></strong> — Unpack your list of coroutines: <code>await asyncio.gather(*tasks)</code>.</li>
+      <li><strong>Concurrent execution</strong> — All coroutines start at nearly the same time. Total runtime = the <em>longest single task</em>, not the sum of all.</li>
+      <li><strong>Ordered results</strong> — Results come back in the same order as your input list, even if tasks finish at different times.</li>
+      <li><strong>The "All-Async" rule</strong> — Any function called with <code>await</code> must itself be declared as <code>async def</code>. Awaiting a regular function raises a RuntimeWarning.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>import</kw> asyncio
+
+<kw>async def</kw> <fn>api_call</fn>(name, delay):
+    <kw>await</kw> asyncio.<fn>sleep</fn>(delay)
+    <kw>return</kw> <st>f"{name} data fetched"</st>
+
+<kw>async def</kw> <fn>main</fn>():
+    tasks = [
+        <fn>api_call</fn>(<st>"orders"</st>,    <nm>3</nm>),
+        <fn>api_call</fn>(<st>"customers"</st>, <nm>2</nm>),
+        <fn>api_call</fn>(<st>"products"</st>,  <nm>1</nm>),
+    ]
+    results = <kw>await</kw> asyncio.<fn>gather</fn>(*tasks)
+    <fn>print</fn>(results)
+    <cm># Total: ~3 seconds (not 3+2+1=6) ✅</cm>
+
+asyncio.<fn>run</fn>(<fn>main</fn>())
+</pre></div>
+  </div>
+
+  <div class="card card-accent-blue">
+    <h3><span class="icon">⚖️</span> Multithreading vs. AsyncIO — Quick Comparison</h3>
+    <table class="styled-table">
+      <thead><tr><th>Aspect</th><th>Multithreading</th><th>AsyncIO</th></tr></thead>
+      <tbody>
+        <tr><td>Thread count</td><td>One OS thread per task</td><td>Single thread, many coroutines</td></tr>
+        <tr><td>Memory</td><td>Higher (each thread has overhead)</td><td>Lower (single thread)</td></tr>
+        <tr><td>Idle waiting</td><td>Thread sits blocked and wastes CPU</td><td>Event loop runs other tasks freely</td></tr>
+        <tr><td>Control</td><td>Manual start / join</td><td><code>await</code> and <code>gather</code> manage it</td></tr>
+        <tr><td>Best for</td><td>Blocking libraries without async API</td><td>High-concurrency I/O tasks</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 8 — APIs
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch8">
+  <div class="chapter-label">Chapter 8</div>
+  <h2>🌐 API Calls, HTTP, and Authentication</h2>
+  <p class="chapter-desc">How to communicate with external services using Python's requests library.</p>
+
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is an API?</h3>
+    <p class="definition">An API (Application Programming Interface) is a secure middleman between your Python script and a backend database or service.</p>
+    <ul class="bullet-list">
+      <li><strong>Why APIs exist</strong> — You almost never get direct database access in production. The API acts as the secure, controlled gateway.</li>
+      <li><strong>Endpoints</strong> — An API exposes specific URLs (endpoints) for each resource, e.g., <code>/orders</code>, <code>/customers</code>, <code>/products</code>.</li>
+      <li><strong>Public endpoints</strong> — No login required. Anyone can call them and get data back.</li>
+      <li><strong>Private endpoints</strong> — Require authentication, typically a JWT (JSON Web Token) passed in the request header.</li>
+      <li><strong>Flow</strong> — <code>Your code → API → Database → API → Your code</code>. The API handles validation and access control in between.</li>
+    </ul>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3><span class="icon">📡</span> HTTP Methods — GET, POST, PUT, DELETE</h3>
+    <table class="styled-table">
+      <thead><tr><th>Method</th><th>CRUD</th><th>Purpose</th><th>Success Code</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET</code></td><td>Read</td><td>Retrieve data from the server</td><td>200</td></tr>
+        <tr><td><code>POST</code></td><td>Create</td><td>Submit new data to create a resource</td><td>201</td></tr>
+        <tr><td><code>PUT</code></td><td>Update</td><td>Replace an existing resource entirely</td><td>200/204</td></tr>
+        <tr><td><code>PATCH</code></td><td>Update</td><td>Partially modify a resource</td><td>200</td></tr>
+        <tr><td><code>DELETE</code></td><td>Delete</td><td>Remove a resource from the server</td><td>200/204</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-accent-yellow">
+    <h3><span class="icon">🐍</span> Making API Calls with <code>requests</code></h3>
+    <p class="definition">The <code>requests</code> library is Python's standard tool for making HTTP calls. Install once with <code>pip install requests</code>.</p>
+    <ul class="bullet-list">
+      <li><strong><code>response.status_code</code></strong> — The HTTP status code (200 = success, 404 = not found, etc.). Always check this first.</li>
+      <li><strong><code>response.json()</code></strong> — Parses the response body as JSON and returns a Python dict or list. The most common way to read API responses.</li>
+      <li><strong><code>response.text</code></strong> — Returns the raw response body as a plain string.</li>
+      <li><strong>GET</strong> uses <code>requests.get(url)</code>. <strong>POST</strong> uses <code>requests.post(url, json=data)</code> where <code>json=</code> automatically sets the Content-Type header.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>import</kw> requests, json
+
+<cm># GET — retrieve data</cm>
+response = requests.<fn>get</fn>(<st>"https://jsonplaceholder.typicode.com/posts/1"</st>)
+<fn>print</fn>(response.status_code)    <cm># → 200</cm>
+<fn>print</fn>(response.<fn>json</fn>())         <cm># → Python dict</cm>
+
+<cm># POST — create data</cm>
+data     = {<st>"title"</st>: <st>"My Post"</st>, <st>"body"</st>: <st>"Content"</st>, <st>"userId"</st>: <nm>1</nm>}
+response = requests.<fn>post</fn>(<st>"https://jsonplaceholder.typicode.com/posts"</st>, json=data)
+<fn>print</fn>(response.status_code)    <cm># → 201 Created</cm>
+</pre></div>
+  </div>
+
+  <div class="card card-accent-blue">
+    <h3><span class="icon">🔑</span> Query Parameters and Authentication Headers</h3>
+    <ul class="bullet-list">
+      <li><strong>Query parameters</strong> — Key-value pairs appended to a URL after <code>?</code> (e.g., <code>?userId=1&amp;id=5</code>). Pass them as a dict to <code>params=</code> and requests builds the URL for you.</li>
+      <li><strong>JWT Auth</strong> — Send the token in the <code>Authorization</code> header as <code>Bearer &lt;token&gt;</code>. Required for private/protected endpoints.</li>
+      <li><strong>API Key Auth</strong> — Send via <code>X-API-Key</code> header. Common for AI/LLM APIs like OpenAI.</li>
+      <li><strong>Basic Auth</strong> — Use <code>auth=HTTPBasicAuth("user", "pass")</code>. requests automatically base-64 encodes the credentials.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<cm># Query parameters — requests builds the URL automatically</cm>
+response = requests.<fn>get</fn>(url, params={<st>"userId"</st>: <nm>1</nm>, <st>"id"</st>: <nm>5</nm>})
+
+<cm># JWT Bearer token</cm>
+headers  = {<st>"Authorization"</st>: <st>f"Bearer {jwt_token}"</st>,
+             <st>"Content-Type"</st>:  <st>"application/json"</st>}
+response = requests.<fn>get</fn>(secure_url, headers=headers)
+
+<cm># API Key authentication</cm>
+response = requests.<fn>get</fn>(ai_url, headers={<st>"X-API-Key"</st>: api_key})
+</pre></div>
+  </div>
+
+  <div class="card card-accent-red">
+    <h3><span class="icon">📊</span> HTTP Status Codes — What They Mean</h3>
+    <table class="styled-table">
+      <thead><tr><th>Code</th><th>Category</th><th>Meaning &amp; When You See It</th></tr></thead>
+      <tbody>
+        <tr><td>200</td><td>✅ Success</td><td>Request succeeded, data returned in response body</td></tr>
+        <tr><td>201</td><td>✅ Success</td><td>New resource created (after a POST)</td></tr>
+        <tr><td>204</td><td>✅ Success</td><td>Success but no content to return (common for DELETE/PUT)</td></tr>
+        <tr><td>400</td><td>⚠️ Client</td><td>Bad request — your request has a syntax or validation error</td></tr>
+        <tr><td>401</td><td>⚠️ Client</td><td>Unauthorized — token is missing, expired, or wrong</td></tr>
+        <tr><td>403</td><td>⚠️ Client</td><td>Forbidden — authenticated but you don't have permission</td></tr>
+        <tr><td>404</td><td>⚠️ Client</td><td>Not found — wrong URL, wrong ID, or resource doesn't exist</td></tr>
+        <tr><td>500</td><td>🔥 Server</td><td>Internal server error — problem on the server side, not your code</td></tr>
+        <tr><td>503</td><td>🔥 Server</td><td>Service unavailable — server is down or overloaded</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 9 — PYDANTIC
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch9">
+  <div class="chapter-label">Chapter 9</div>
+  <h2>🛡️ Pydantic — Schema Validation</h2>
+  <p class="chapter-desc">Enforcing strict data types and rules at the point of data entry.</p>
+
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is Pydantic?</h3>
+    <p class="definition">Pydantic is a Python library that validates data against a defined schema using type hints. If the data doesn't match, it raises a clear <code>ValidationError</code> immediately.</p>
+    <ul class="bullet-list">
+      <li><strong>Built on type hints</strong> — You declare a class that extends <code>BaseModel</code> and annotate fields with types. Pydantic handles all validation automatically.</li>
+      <li><strong>Fast</strong> — Partly written in Cython (compiled C). It's very performant and widely used at scale.</li>
+      <li><strong>Used by FastAPI</strong> — FastAPI uses Pydantic for request/response validation, making it the industry standard for API data validation.</li>
+      <li><strong>Two modes</strong> — <em>Lenient mode</em> (default): auto-converts compatible types (e.g., <code>"5"</code> → <code>5</code>). <em>Strict mode</em>: rejects anything that isn't the exact right type — no coercion at all.</li>
+      <li><strong>Clear errors</strong> — When validation fails, Pydantic tells you exactly which field failed and why, making debugging fast.</li>
+    </ul>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3><span class="icon">🧱</span> Basic Pydantic Model + Field Constraints</h3>
+    <ul class="bullet-list">
+      <li><strong><code>BaseModel</code></strong> — Your model class must extend <code>BaseModel</code>. Pydantic then validates all fields on instantiation.</li>
+      <li><strong><code>Field(...)</code></strong> — The three dots <code>...</code> mean the field is <strong>required</strong>. Add rules like <code>min_length</code>, <code>max_length</code>, <code>ge</code> (≥), <code>le</code> (≤).</li>
+      <li><strong><code>EmailStr</code></strong> — Auto-validates email format. Needs <code>pip install email-validator</code> to work.</li>
+      <li><strong><code>Optional[str]</code></strong> — Makes the field optional. If not provided, defaults to <code>None</code> (or whatever default you set).</li>
+      <li><strong><code>Literal["male", "female"]</code></strong> — Restricts the field to only the listed allowed values. Any other value raises a <code>ValidationError</code>.</li>
+      <li><strong><code>StrictInt</code> / <code>StrictStr</code></strong> — Enables strict mode for that field. Rejects coercion — the exact type must be provided.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>from</kw> pydantic <kw>import</kw> <fn>BaseModel</fn>, <fn>Field</fn>, <fn>EmailStr</fn>, <fn>StrictStr</fn>, <fn>StrictInt</fn>
+<kw>from</kw> typing <kw>import</kw> <fn>Optional</fn>, <fn>Literal</fn>
+
+<kw>class</kw> <fn>Employee</fn>(<fn>BaseModel</fn>):
+    name:       StrictStr = <fn>Field</fn>(..., min_length=<nm>3</nm>, max_length=<nm>50</nm>)
+    age:        StrictInt = <fn>Field</fn>(..., ge=<nm>18</nm>, le=<nm>65</nm>)
+    email:      <fn>EmailStr</fn> = <fn>Field</fn>(..., description=<st>"Valid email"</st>)
+    department: <fn>Optional</fn>[StrictStr] = <kw>None</kw>   <cm># optional — defaults to None</cm>
+    gender:     <fn>Literal</fn>[<st>"male"</st>, <st>"female"</st>] = <fn>Field</fn>(...)
+
+<cm># ✅ Valid — passes all rules</cm>
+emp = <fn>Employee</fn>(name=<st>"Alice"</st>, age=<nm>30</nm>, email=<st>"a@b.com"</st>, gender=<st>"female"</st>)
+
+<cm># ❌ Invalid — age=17 is below ge=18 → ValidationError</cm>
+<cm># Employee(name="Bob", age=17, email="b@b.com", gender="male")</cm>
+</pre></div>
+  </div>
+
+  <div class="card card-accent-yellow">
+    <h3><span class="icon">🔄</span> Serialization: Exporting Your Model Data</h3>
+    <ul class="bullet-list">
+      <li><strong><code>model_dump()</code></strong> — Converts the Pydantic model to a plain Python dictionary. You can then access, iterate, or pass it to any function that expects a dict.</li>
+      <li><strong><code>model_dump_json()</code></strong> — Converts the model to a JSON string. Perfect when you need to send data to another API or store it as JSON.</li>
+      <li><strong>Round-trip</strong> — You can reconstruct a model from JSON: <code>Employee(**json.loads(emp_json))</code>. Validation runs again on reconstruction, keeping your data clean.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+emp = <fn>Employee</fn>(name=<st>"Alice"</st>, age=<nm>30</nm>, email=<st>"a@b.com"</st>, gender=<st>"female"</st>)
+
+emp_dict = emp.<fn>model_dump</fn>()
+<fn>print</fn>(emp_dict[<st>"name"</st>])      <cm># → Alice</cm>
+
+emp_json = emp.<fn>model_dump_json</fn>()
+<fn>print</fn>(emp_json)               <cm># → {"name":"Alice","age":30,...}</cm>
+
+<cm># Reconstruct from JSON</cm>
+<kw>import</kw> json
+emp2 = <fn>Employee</fn>(**json.<fn>loads</fn>(emp_json))  <cm># validation runs again</cm>
+</pre></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 10 — PYTEST
+════════════════════════════════════════════ -->
+<section class="chapter" id="ch10">
+  <div class="chapter-label">Chapter 10</div>
+  <h2>🧪 Testing with pytest</h2>
+  <p class="chapter-desc">Writing automated tests to prove your code works correctly every time.</p>
+
+  <div class="card card-accent">
+    <h3><span class="icon">❓</span> What is pytest and Why Test?</h3>
+    <p class="definition">pytest is Python's most popular testing framework. It lets you write functions that automatically verify your code produces the correct output for given inputs.</p>
+    <ul class="bullet-list">
+      <li><strong>Catch bugs early</strong> — Tests fail the moment you introduce a bug, before it ever reaches production users.</li>
+      <li><strong>Confidence to change code</strong> — With tests covering your code, you can refactor or add features knowing the tests will alert you if something breaks.</li>
+      <li><strong>File naming convention</strong> — Test files must be named <code>test_*.py</code> (e.g., <code>test_weather.py</code>) and test functions must start with <code>test_</code>.</li>
+      <li><strong>Run all tests</strong> — One command: <code>pytest ./tests/</code>. Passing tests show a green dot <code>.</code>, failing ones show <code>F</code> with a full traceback.</li>
+      <li><strong>One function per scenario</strong> — Create a fresh object inside each test function. Don't share state between tests — it leads to unpredictable failures.</li>
+    </ul>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3><span class="icon">✍️</span> Writing Your First Test with <code>assert</code></h3>
+    <p class="definition">An <code>assert</code> statement checks that actual output equals expected output. If false, pytest marks the test as FAILED and shows you why.</p>
+    <ul class="bullet-list">
+      <li><strong>Test every branch</strong> — Test the freezing case, the chilly case, the pleasant case, and the hot case. Don't just test the happy path.</li>
+      <li><strong>One test function per behavior</strong> — Keeps failures easy to pinpoint. If test_freezing fails, you know exactly which scenario broke.</li>
+      <li><strong>Import from your module</strong> — Use <code>from weather import weather_check</code> to pull in the function you're testing.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<cm># weather.py</cm>
+<kw>def</kw> <fn>weather_check</fn>(temp: <fn>int</fn>) -> <fn>str</fn>:
+    <kw>if</kw> temp < <nm>0</nm>:   <kw>return</kw> <st>"freezing"</st>
+    <kw>if</kw> temp < <nm>15</nm>:  <kw>return</kw> <st>"bit chilly"</st>
+    <kw>if</kw> temp < <nm>25</nm>:  <kw>return</kw> <st>"pleasant"</st>
+    <kw>return</kw> <st>"hot"</st>
+
+<cm># test_weather.py</cm>
+<kw>from</kw> weather <kw>import</kw> <fn>weather_check</fn>
+
+<kw>def</kw> <fn>test_weather_check</fn>():
+    <kw>assert</kw> <fn>weather_check</fn>(-<nm>5</nm>) == <st>"freezing"</st>
+    <kw>assert</kw> <fn>weather_check</fn>(<nm>10</nm>) == <st>"bit chilly"</st>
+    <kw>assert</kw> <fn>weather_check</fn>(<nm>20</nm>) == <st>"pleasant"</st>
+    <kw>assert</kw> <fn>weather_check</fn>(<nm>30</nm>) == <st>"hot"</st>
+</pre></div>
+  </div>
+
+  <div class="card card-accent-yellow">
+    <h3><span class="icon">🎯</span> Parameterized Testing — Test Many Cases Cleanly</h3>
+    <p class="definition"><code>@pytest.mark.parametrize</code> runs the same test function multiple times with different inputs, keeping your tests clean and scalable.</p>
+    <ul class="bullet-list">
+      <li><strong>Why not many asserts in one function?</strong> — It becomes cluttered fast, and when one assert fails, the rest don't run. You don't know if the other cases pass or fail.</li>
+      <li><strong>How it works</strong> — Pass a string of parameter names (comma-separated) and a list of tuples (one tuple per test case). pytest runs the function once per tuple.</li>
+      <li><strong>Single assert in body</strong> — The function body stays clean with just one <code>assert</code> statement. All variation is in the decorator's list.</li>
+      <li><strong>Easy to extend</strong> — Adding a new test case is just adding one more tuple to the list — no new function needed.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<kw>import</kw> pytest
+<kw>from</kw> weather <kw>import</kw> <fn>weather_check</fn>
+
+<dc>@pytest.mark.parametrize</dc>(<st>"temp, expected"</st>, [
+    (-<nm>5</nm>,  <st>"freezing"</st>),
+    (<nm>10</nm>,  <st>"bit chilly"</st>),
+    (<nm>20</nm>,  <st>"pleasant"</st>),
+    (<nm>30</nm>,  <st>"hot"</st>),
+])
+<kw>def</kw> <fn>test_weather</fn>(temp, expected):
+    <kw>assert</kw> <fn>weather_check</fn>(temp) == expected
+<cm># pytest runs this 4 times — once per row in the list above</cm>
+</pre></div>
+  </div>
+
+  <div class="card card-accent-red">
+    <h3><span class="icon">💥</span> Testing That Errors Are Raised: <code>pytest.raises()</code></h3>
+    <p class="definition">Use <code>pytest.raises()</code> to verify your code correctly raises an exception when given invalid input.</p>
+    <ul class="bullet-list">
+      <li><strong>Context manager</strong> — Wrap the call that should raise in a <code>with pytest.raises(ErrorType):</code> block.</li>
+      <li><strong>Test passes if exception IS raised</strong> — If the exception fires, the test passes. If it doesn't fire, the test fails (meaning your code didn't handle the bad input correctly).</li>
+      <li><strong><code>match=</code> argument</strong> — Optionally check the error message contains specific text using <code>match="expected text"</code>.</li>
+      <li><strong>Why important</strong> — Ensures your error-handling logic actually works. Don't just test the happy path — test that bad inputs are rejected properly.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<cm># divide.py</cm>
+<kw>def</kw> <fn>divide</fn>(a, b):
+    <kw>if</kw> b == <nm>0</nm>:
+        <kw>raise</kw> <fn>ValueError</fn>(<st>"cannot divide by 0"</st>)
+    <kw>return</kw> a / b
+
+<cm># test_divide.py</cm>
+<kw>import</kw> pytest
+<kw>from</kw> divide <kw>import</kw> <fn>divide</fn>
+
+<kw>def</kw> <fn>test_divide_by_zero</fn>():
+    <kw>with</kw> pytest.<fn>raises</fn>(<fn>ValueError</fn>, match=<st>"cannot divide by 0"</st>):
+        <fn>divide</fn>(<nm>3</nm>, <nm>0</nm>)   <cm># ← must raise ValueError → test passes ✅</cm>
+</pre></div>
+  </div>
+
+  <div class="card card-accent-blue">
+    <h3><span class="icon">🎭</span> Mocking External API Calls</h3>
+    <p class="definition">Mocking replaces a real external dependency (like an API call) with a fake stand-in so tests are fast, reliable, and don't need network access.</p>
+    <ul class="bullet-list">
+      <li><strong>Why mock?</strong> — You don't want tests to fail because an external server is down, slow, or returns different data each time. Tests must be deterministic and fast.</li>
+      <li><strong>Install</strong> — <code>pip install pytest-mock</code>. Then use the <code>mocker</code> fixture which is automatically injected into test functions.</li>
+      <li><strong><code>mocker.patch()</code></strong> — Intercepts the specified function call and replaces it with a fake that returns whatever you define. The real network call never happens.</li>
+      <li><strong>Target path</strong> — Patch the function where it's <em>used</em>, not where it's defined. So if <code>mymodule.py</code> imports <code>requests</code>, patch <code>"mymodule.requests.get"</code>.</li>
+      <li><strong>Test only your logic</strong> — With the API mocked, you're testing only your function's logic — not the behavior of the external server.</li>
+    </ul>
+    <div class="code-block" data-lang="python"><pre>
+<cm># mymodule.py</cm>
+<kw>import</kw> requests
+<kw>def</kw> <fn>fetch_weather</fn>(url):
+    <kw>return</kw> requests.<fn>get</fn>(url).<fn>json</fn>()
+
+<cm># test_mymodule.py</cm>
+<kw>from</kw> mymodule <kw>import</kw> <fn>fetch_weather</fn>
+
+<kw>def</kw> <fn>test_fetch_weather</fn>(mocker):
+    mock_data = {<st>"weather"</st>: <st>"sunny"</st>}
+    mocker.<fn>patch</fn>(
+        <st>"mymodule.requests.get"</st>,
+        return_value=type(<st>"R"</st>, (), {<st>"json"</st>: <kw>lambda</kw> s: mock_data})()
+    )
+    result = <fn>fetch_weather</fn>(<st>"https://api.example.com/weather"</st>)
+    <kw>assert</kw> result == mock_data   <cm># ✅ no real network call made!</cm>
+</pre></div>
+    <div class="info-box"><strong>Quick install:</strong> <code>pip install pytest pytest-mock</code> &nbsp;|&nbsp; <strong>Run tests:</strong> <code>pytest ./tests/</code> &nbsp;|&nbsp; ✅ Pass = dot &nbsp;|&nbsp; ❌ Fail = F with traceback</div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  <p>📚 Advanced Python Interview Notes &nbsp;|&nbsp; Prepared by <span>Claude</span></p>
+  <p style="margin-top:8px;font-size:12px;">OOP · Decorators · Inheritance · Polymorphism · OS Module · Multithreading · AsyncIO · APIs · Pydantic · pytest</p>
+</footer>
+
+</body>
+</html>
